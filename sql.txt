@@ -1,0 +1,9 @@
+create database project_db;
+create table users (email varchar(255) primary key, password varchar(255) not null, firstname varchar(50) not null, lastname varchar(50) not null, reg_date datetime default null, status varchar(255) default 'Offline');
+create table friend_int (source varchar(255) not null, target varchar(255) not null);
+alter table friend_int add primary key(source,target);
+alter table friend_int add constraint source foreign key (source) references users(email) on delete cascade on update cascade;
+alter table friend_int add constraint target foreign key (target) references users(email) on delete cascade on update cascade;
+create table friend_requests (requestid int not null auto_increment unique, source varchar(255) not null, target varchar(255) not null);
+alter table friend_requests add constraint sourcereq foreign key (source) references users(email) on delete cascade on update cascade;
+alter table friend_requests add constraint targetreq foreign key (target) references users(email) on delete cascade on update cascade; 
