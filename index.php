@@ -59,13 +59,39 @@
                     mysqli_query($conn,$sql);
                     header("Location: index.php");
                 }
+                //friend request count query
+                function requests($conn,$email){
+                    $sql="select count(target) as requests from friend_requests where target = '$email'";
+                    $result = mysqli_query($conn,$sql);
+                    $req = mysqli_fetch_assoc($result);
+                    return $req['requests'];
+                }
                 //checking login from included files
                 checklogin($conn);
                 $name = $_SESSION['name'];
             ?>
             <div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded'>
                 <div class='row '>
-                    <h3> Welcome to The Project <?php echo $name;?><button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button></h3>
+                    <h3> Welcome to The Project <?php echo $name;?>                
+                    <button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
+                    
+                        <?php
+                            $email = $_SESSION['email'];
+                            $sql="select source from friend_requests where target = '$email';";
+                            $result = mysqli_query($conn,$sql);
+                            
+                                echo "<div style = 'float:right;'   class='dropdown'><button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false'> Friend requests <span class='badge bg-secondary'>".requests($conn,$_SESSION['email'])."</span> </button> <ul class='dropdown-menu' aria-labelledby='dropdownMeneButton1'>";
+                                while ($row = mysqli_fetch_assoc($result)){
+                                echo "<li>";
+                                echo "<div style ='float:left;'><p>".$row['source']."</p></div>";
+                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='accept' value=".$row["source"].">Accept</button> </form></div>";
+                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='reject' value=".$row["source"].">Reject</button> </form></div>";
+                                echo "</li></ul></div>";
+                                
+                            }
+                        ?>
+                    </div>
+                    </h3>                     
                 </div>
             </div>
             <?php
@@ -73,7 +99,7 @@
                 $sql = "select email,firstname, lastname,reg_date,status from users where NOT '$email' = email";
                 $result = mysqli_query($conn,$sql);
                 if (mysqli_num_rows($result)==0){
-                    echo "<p>0 users</p>";}
+                    echo "<div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded' ><p class='alert alert-dark' role='alert'>There are no other users in the project yet!</p></div>";}
                 else{
                     echo "<table class='table shadow-lg p-3 mb-5 bg-body rounded  table-dark table-striped'>";
                     echo "<tr><td> Name </td> <td>Email</td> <td>Status</td><td>Friendship</td></tr>";
@@ -91,28 +117,13 @@
                 $result = mysqli_query($conn,$sql);
                 if(mysqli_num_rows($result)>0){
                     while ($row=mysqli_fetch_assoc($result)){
-                        echo "<p>".$row['friend']."</p>";
-                        echo "<form method='POST' action ='index.php'> <button onload='isfriend(".$row['friend'].")' class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['friend'].">Delete</button> </form></td></tr>";
+                        echo "<div style ='float:left;'><p>".$row['friend']."</p></div>";
+                        echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button onload='isfriend(".$row['friend'].")' class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['friend'].">Delete</button> </form></td></tr></div>";
 
                     }
                     } else {
-                        echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p >No friends yet!</p></div>";
+                        echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p class='alert alert-dark' >No friends yet!</p></div>";
                     }
-            ?>
-            <h2> friend request </h2>
-            <?php
-                $email = $_SESSION['email'];
-                $sql="select source from friend_requests where target = '$email';";
-                $result = mysqli_query($conn,$sql);
-                if (mysqli_num_rows($result)==0){
-                    echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p>No friend requests</p></div>";
-                } else {
-                    while ($row = mysqli_fetch_assoc($result)){
-                    echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p>".$row['source']."</p>";
-                    echo "<form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='accept' value=".$row["source"].">Accept</button> </form>";
-                    echo "<form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='reject' value=".$row["source"].">Reject</button> </form></div>";
-                    }
-                }
             ?>
             <br>
         </body>
