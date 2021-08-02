@@ -52,8 +52,9 @@
                         <p>password: <input  type="password" class="form-control is-invalid" id="floatingInputInvalid" name= "password" placeholder="password" required><br></p>
                         <p>First name: <input class="form-control is-invalid" type="textarea" name= "fname" placeholder="Jhon"required><br></p>
                         <p>Last name: <input class="form-control is-invalid" type="textarea" name= "lname" placeholder="Doe" required><br></p>
-                        <input class='btn btn-outline-secondary'type="submit">
+                        <input class='btn btn-outline-secondary'type="submit" value="Signup">
                         </form>
+                        <button class='btn btn-outline-secondary' onclick="window.location.href='login.php'" > Login</button>
                     </div>
                     <div class="col">
                     </div>

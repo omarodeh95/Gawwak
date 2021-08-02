@@ -74,7 +74,7 @@
                 <div class='row '>
                     <h3> Welcome to The Project <?php echo $name;?>                
                     <button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
-                    
+                    <!-- friend requests function -->
                         <?php
                             $email = $_SESSION['email'];
                             $sql="select source from friend_requests where target = '$email';";
@@ -117,14 +117,16 @@
                 $result = mysqli_query($conn,$sql);
                 if(mysqli_num_rows($result)>0){
                     while ($row=mysqli_fetch_assoc($result)){
-                        echo "<div style ='float:left;'><p>".$row['friend']."</p></div>";
+                        echo "<div  style ='float:left;'><p>".$row['friend']."</p></div>";
                         echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button onload='isfriend(".$row['friend'].")' class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['friend'].">Delete</button> </form></td></tr></div>";
-
+                        echo "<script type = \"text/javascript\"> isfriend(\"".$row['friend']."\");</script>";
+                        
                     }
                     } else {
                         echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p class='alert alert-dark' >No friends yet!</p></div>";
                     }
             ?>
+            
             <br>
         </body>
     </html>
