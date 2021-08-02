@@ -11,6 +11,10 @@
                     document.getElementById(email).innerHTML="Friends";
                     document.getElementById(email).type="button";
                 }
+                function isfriendd(email){
+                    document.getElementById(email).innerHTML="Check Friend requests";
+                    document.getElementById(email).type="button";
+                }
             </script>
         </head>
         <body>
@@ -126,6 +130,16 @@
                         echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p class='alert alert-dark' >No friends yet!</p></div>";
                     }
             ?>
+            <?php
+                //adding code to update users list to accepting or rejecting
+                            $email = $_SESSION['email'];
+                            $sql="select source from friend_requests where target = '$email';";
+                            $result = mysqli_query($conn,$sql);
+                                while ($row = mysqli_fetch_assoc($result)){
+                                echo "<script type = \"text/javascript\"> isfriendd(\"".$row['source']."\");</script>";
+                                                                
+                            }
+                            ?>
             
             <br>
         </body>
