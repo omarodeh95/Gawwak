@@ -7,3 +7,6 @@ alter table friend_int add constraint target foreign key (target) references use
 create table friend_requests (requestid int not null auto_increment unique, source varchar(255) not null, target varchar(255) not null);
 alter table friend_requests add constraint sourcereq foreign key (source) references users(email) on delete cascade on update cascade;
 alter table friend_requests add constraint targetreq foreign key (target) references users(email) on delete cascade on update cascade; 
+create table messages (msgid int primary key auto_increment, source varchar(255) not null, target varchar(255) not null, msg varchar(255) not null, msg_date datetime not null);
+alter table messages add foreign key(source) references users(email);
+alter table messages add foreign key(target) references users(email);

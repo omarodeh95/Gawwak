@@ -16,8 +16,13 @@ $emails = $_SESSION['email'];
 $sql = "update users set status = 'Offline' where email = '$emails'";
 mysqli_query($conn,$sql);
 unset($_SESSION['email']);
+unset($_SESSION['friendname']);
+unset($_SESSION['friendemail']);
 }
-
-function addfriend($friend){
+function basicvalidate($data){
+    $data=htmlspecialchars($data);
+    $data=stripslashes($data);
+    $data=trim($data);
+    return $data;
 }
 ?>

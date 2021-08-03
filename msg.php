@@ -17,7 +17,7 @@
                 }
             </script>
         </head>
-        <body>
+        <body style="height:100%; width:100%;">
             <?php
                 //Error checking
                 ini_set('display_errors', 1);
@@ -70,11 +70,29 @@
                     $req = mysqli_fetch_assoc($result);
                     return $req['requests'];
                 }
+                if (isset($_POST['friendemail'])){
+                $_SESSION['friendname']=ucfirst($_POST['friendname']);
+                $_SESSION['friendemail']=$_POST['friendemail'];
+                }
+                
+
+                
+                if (isset($_POST['send'])){
+                    $email=$_SESSION['email'];
+                    $friend=$_SESSION['friendemail'];
+                    $txt=$_POST['send'];
+                    $date = Date('Y-m-d H:i:s');
+                    if(!empty($txt)){
+                    basicvalidate($txt);
+                    $sql="insert into messages(source,target,msg,msg_date) values ('$email','$friend','$txt','$date')";
+                    mysqli_query($conn,$sql);
+                    }
+                }
                 //checking login from included files
                 checklogin($conn);
                 $name = $_SESSION['name'];
             ?>
-            <div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded'>
+            <div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded' style="height:10%">
                 <div class='row '>
                     <h3> Welcome to The Project <?php echo $name;?>                
                     <button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
@@ -93,57 +111,73 @@
                                 echo "</li></ul></div>";
                                 
                             }
-                        ?>                        
+                        ?>
                     </div>
-                    <button onclick="window.location.href='msg.php'" class='btn btn-outline-secondary' style ="float:right;">Messages</button>
+                    <button onclick="window.location.href='index.php'" class='btn btn-outline-secondary' style ="float:right;">Home</button>
                     </h3>                     
                 </div>
             </div>
-            <?php
-                $email = $_SESSION['email'];
-                $sql = "select email,firstname, lastname,reg_date,status from users where NOT '$email' = email";
-                $result = mysqli_query($conn,$sql);
-                if (mysqli_num_rows($result)==0){
-                    echo "<div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded' ><p class='alert alert-dark' role='alert'>There are no other users in the project yet!</p></div>";}
-                else{
-                    echo "<table class='table shadow-lg p-3 mb-5 bg-body rounded  table-dark table-striped'>";
-                    echo "<tr><td> Name </td> <td>Email</td> <td>Status</td><td>Friendship</td></tr>";
-                    while ($row = mysqli_fetch_assoc($result)){
-                        echo "<tr><td>".$row["firstname"]." ".$row['lastname']."</td><td>".$row["email"]."</td><td>".$row['status']."</td><td>";
-                        echo "<form method='POST' action ='index.php' ><button id=".$row['email']." class='btn btn-outline-secondary' type = 'submit' name='addfriend' value=".$row["email"].">Add friend</button></form>";
-                    }
-                    echo "</table>";
-                }
-            ?>
-            <h2> Friends list</h2>
-            <?php
-                $email = $_SESSION['email'];
-                $sql = "select email, firstname, lastname from users inner join (select target as friend from friend_int where source = '$email' union select source as friend from friend_int where target = '$email') as friends on users.email=friends.friend;";
-                $result = mysqli_query($conn,$sql);
-                if(mysqli_num_rows($result)>0){
-                    echo "<div class = 'row shadow-lg p-3 mb-5 bg-body rounded'>";
-                    while ($row=mysqli_fetch_assoc($result)){
-                        echo "<div  class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><p >".ucfirst($row['firstname'])." ".ucfirst($row['lastname'])."</p></div>";
-                        echo "<div class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['email'].">Delete</button> </form></td></tr></div>";
-                        echo "<script type = \"text/javascript\"> isfriend(\"".$row['email']."\");</script>";
+
+            <div class="row" style="height:90%;">
+                <div class ='col-2 shadow-lg p-3 mb-5 bg-body rounded' style="height:100% overflow:'scroll'" >
+                <?php
+                    $email = $_SESSION['email'];
+                    $sql="select email, firstname, lastname,status from users inner join (select source as friend from friend_int where target = '$email' union select target from friend_int where source ='$email') as friends on friends.friend=users.email order by status desc";
+                    $result = mysqli_query($conn,$sql);
+                    if(!mysqli_num_rows($result)>0){
+                        echo "<h3> You have no friends </h3>";
                         
+                    }else{
+                        while ($row=mysqli_fetch_assoc($result)){
+                            
+                            echo "<form action='msg.php' method='POST'><input type='text' style ='display:none' name='friendemail' value=".$row['email']."></input><input type='text' style ='display:none' name='friendname' value=".$row['firstname']."></input> <button class ='btn btn-outline-secondary' style='width:100%' type='submit' value='submit'><h3 style='text-align:left;'>".ucfirst($row['firstname'])." ".ucfirst($row['lastname'])."</h3> <h6 style='text-align:right;'>".$row['status']."</h6></button></form>";
+                            if(!isset($_SESSION['friendemail'])){                                
+                                $_SESSION['friendname']=ucfirst($row['firstname']);
+                                $_SESSION['friendemail']=$row['email'];
+                            }   
+                        }
                     }
-                    echo "</div>";
-                    } else {
-                        echo "<div class='shadow-lg p-3 mb-5 bg-body rounded'><p class='alert alert-dark' >No friends yet!</p></div>";
+                    ?>
+                </div>
+                <div class ='col-10 shadow-lg p-3 mb-5 bg-body rounded' style = "height: 100%">
+                    <div class='row' style="height:10%">                    
+                    <h3> <?= $_SESSION['friendname']?> </h3>
+                    </div>                    
+                    <div class='row overflow-scroll' style="height:60%;">
+                    <?php 
+                    $friend_name= $_SESSION['friendemail'];
+                    $sql="select msg, source, target, msg_date from messages where source = '$email' and target= '$friend_name' union select msg, source ,target,msg_date from messages where target='$email' and source = '$friend_name' order by msg_date";
+                    $result = mysqli_query($conn,$sql);
+                    if(mysqli_num_rows($result)>0){
+                        while ($row=mysqli_fetch_assoc($result)){
+                            if ($row['source']==$email){
+                                echo "<div class='col-sm-9 bg-light p-3 border' style='height:15%;box-sizing:border-box; border-radius: 25px;'>".$row['msg']."</div>";
+                            } else {
+                                echo "<div class='col-sm-3' style='height:15%;box-sizing:border-box; border-radius: 25px;'></div>"."<div style='height:15%; box-sizing:border-box; border-radius: 25px;' class='col-sm-9 bg-light p-3 border''>".$row['msg']."</div>";
+                            }                            
+                        }
                     }
-            ?>
-            <?php
-                //adding code to update users list to accepting or rejecting
-                            $email = $_SESSION['email'];
-                            $sql="select source from friend_requests where target = '$email';";
-                            $result = mysqli_query($conn,$sql);
-                                while ($row = mysqli_fetch_assoc($result)){
-                                echo "<script type = \"text/javascript\"> isfriendd(\"".$row['source']."\");</script>";
-                                                                
-                            }
-                            ?>
-            
-            <br>
+                    else {
+                        echo "<h2> No messages yet</h2>";
+                    }
+                    ?>                    
+                    </div>                    
+                    <div class='row' style="height:30%">
+                    <form action="msg.php" method="POST" name = "send">
+                    <div class=" row form-floating mb-3">
+                      <input name ='send'type="textarea" class="form-control" id="floatingInput" placeholder="Write a message.." style="height:90%">
+                      <label for="floatingInput">Write a message</label>
+                    </div>
+                    <div>
+                    <button style="float:right; width:15%;" type="submit" class="btn btn-outline-secondary">Send</button>    
+                    </div>                    
+                    </form>
+                    </div>
+                </div>
+            </div>
         </body>
     </html>
+    <?php 
+    echo $_SESSION['email'].$_SESSION['friendname'].$_SESSION['friendemail'];
+    
+    ?>
