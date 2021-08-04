@@ -70,6 +70,12 @@
                     $req = mysqli_fetch_assoc($result);
                     return $req['requests'];
                 }
+                if (isset($_POST['friendemail'])){
+                    $_SESSION['friendemail']=$_POST['friendemail'];
+                    $_SESSION['friendname']=ucfirst($_POST['friendname']);
+                    header("Location: msg.php");
+                }
+
                 //checking login from included files
                 checklogin($conn);
                 $name = $_SESSION['name'];
@@ -124,7 +130,8 @@
                     echo "<div class = 'row shadow-lg p-3 mb-5 bg-body rounded'>";
                     while ($row=mysqli_fetch_assoc($result)){
                         echo "<div  class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><p >".ucfirst($row['firstname'])." ".ucfirst($row['lastname'])."</p></div>";
-                        echo "<div class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['email'].">Delete</button> </form></td></tr></div>";
+                        echo "<div class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['email'].">Delete</button> </form></td>";
+                        echo "<form method='POST' action ='index.php'> <button  class='btn btn-outline-secondary' type = 'submit' name='friendemail' value=".$row['email'].">Message</button> <input type='text' name='friendname' style='display:none;' value=".$row['firstname']."></input></form></td></tr></div>";
                         echo "<script type = \"text/javascript\"> isfriend(\"".$row['email']."\");</script>";
                         
                     }

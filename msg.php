@@ -145,16 +145,16 @@
                     </div>                    
                     <div class='row overflow-scroll' style="height:60%;">
                     <?php 
-                    $friend_name= $_SESSION['friendemail'];
-                    $sql="select msg, source, target, msg_date from messages where source = '$email' and target= '$friend_name' union select msg, source ,target,msg_date from messages where target='$email' and source = '$friend_name' order by msg_date";
+                    $friend_email= $_SESSION['friendemail'];
+                    $sql="select msg, source, target, msg_date from messages where source = '$email' and target= '$friend_email' union select msg, source ,target,msg_date from messages where target='$email' and source = '$friend_email' order by msg_date";
                     $result = mysqli_query($conn,$sql);
                     if(mysqli_num_rows($result)>0){
                         while ($row=mysqli_fetch_assoc($result)){
                             echo "<div class='row'>";
                             if ($row['source']==$email){
-                                echo "<div class='col-sm-9 bg-light p-3 border' style='height:auto; border-radius: 25px;'><p style='vertical-align:middle; word-wrap:break-word;'>".$row['msg']."</p></div>";
+                                echo "<div class='col-sm-9 bg-light shadow-lg p-3 border' style='height:auto; border-radius: 25px;'><p style='vertical-align:middle; word-wrap:break-word;'>".$row['msg']."</p></div>";
                             } else {
-                                echo "<div class='col-sm-3' style='height:auto; border-radius: 25px;'></div>"."<div class='col-sm-9 bg-secondary p-3 border' style='height:auto;  border-radius: 25px;'><p style=' color:white; word-wrap:break-word;  text-align:right; vertical-align:middle;'>".$row['msg']."</p></div>";
+                                echo "<div class='col-sm-3' style='height:auto; border-radius: 25px;'></div>"."<div class='col-sm-9 shadow-lg bg-secondary p-3 border' style='height:auto;  border-radius: 25px;'><p style=' color:white; word-wrap:break-word;  text-align:right; vertical-align:middle;'>".$row['msg']."</p></div>";
                             }
                             echo "</div>";                            
                         }
