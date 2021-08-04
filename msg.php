@@ -150,11 +150,13 @@
                     $result = mysqli_query($conn,$sql);
                     if(mysqli_num_rows($result)>0){
                         while ($row=mysqli_fetch_assoc($result)){
+                            echo "<div class='row'>";
                             if ($row['source']==$email){
-                                echo "<div class='col-sm-9 bg-light p-3 border' style='height:15%;box-sizing:border-box; border-radius: 25px;'>".$row['msg']."</div>";
+                                echo "<div class='col-sm-9 bg-light p-3 border' style='height:auto; border-radius: 25px;'><p style='vertical-align:middle; word-wrap:break-word;'>".$row['msg']."</p></div>";
                             } else {
-                                echo "<div class='col-sm-3' style='height:15%;box-sizing:border-box; border-radius: 25px;'></div>"."<div style='height:15%; box-sizing:border-box; border-radius: 25px;' class='col-sm-9 bg-light p-3 border''>".$row['msg']."</div>";
-                            }                            
+                                echo "<div class='col-sm-3' style='height:auto; border-radius: 25px;'></div>"."<div class='col-sm-9 bg-secondary p-3 border' style='height:auto;  border-radius: 25px;'><p style=' color:white; word-wrap:break-word;  text-align:right; vertical-align:middle;'>".$row['msg']."</p></div>";
+                            }
+                            echo "</div>";                            
                         }
                     }
                     else {
@@ -165,7 +167,7 @@
                     <div class='row' style="height:30%">
                     <form action="msg.php" method="POST" name = "send">
                     <div class=" row form-floating mb-3">
-                      <input name ='send'type="textarea" class="form-control" id="floatingInput" placeholder="Write a message.." style="height:90%">
+                      <input name ='send' type="textarea" class="form-control" id="floatingInput" placeholder="Write a message.." style="height:90%">
                       <label for="floatingInput">Write a message</label>
                     </div>
                     <div>
