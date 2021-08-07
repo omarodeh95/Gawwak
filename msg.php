@@ -179,7 +179,5 @@
             </div>
         </body>
     </html>
-    <?php 
-    echo $_SESSION['email'].$_SESSION['friendname'].$_SESSION['friendemail'];
-    
+    <?php     
     ?>
