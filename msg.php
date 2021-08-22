@@ -45,7 +45,7 @@
                     mysqli_query($conn,$sql);
                     $sql="delete from friend_requests where source='$source' AND target = '$email';";
                     mysqli_query($conn,$sql);
-                    header("Location: index.php");
+                    header("Location: msg.php");
                 }
                 //Friend deletion 
                 if (isset( $_POST['delete'])){
@@ -77,7 +77,7 @@
                 
 
                 
-                if (isset($_POST['send'])){
+                if (isset($_POST['send'])&& isset($_SESSION['friendemail'])){
                     $email=$_SESSION['email'];
                     $friend=$_SESSION['friendemail'];
                     $txt=$_POST['send'];
@@ -91,32 +91,36 @@
                 //checking login from included files
                 checklogin($conn);
                 $name = $_SESSION['name'];
-            ?>
-            <div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded' style="height:10%">
-                <div class='row '>
-                    <h3> Welcome to The Project <?php echo $name;?>                
-                    <button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
-                    <!-- friend requests function -->
-                        <?php
-                            $email = $_SESSION['email'];
-                            $sql="select source from friend_requests where target = '$email';";
-                            $result = mysqli_query($conn,$sql);
+            ?><div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded'>
+            <div class='row '>
+                <div class='col-3'><h3> Gawwak <?php echo $name;?></h3></div>
+                <div class='col'><button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
+                <!-- friend requests function -->
+                    <?php
+                        $email = $_SESSION['email'];
+                        $sql="select source from friend_requests where target = '$email';";
+                        $result = mysqli_query($conn,$sql);
+                        
+                            echo "<div style = 'float:right;'   class='dropdown'><button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false'> Friend requests <span class='badge bg-secondary'>".requests($conn,$_SESSION['email'])."</span> </button> <ul class='dropdown-menu' aria-labelledby='dropdownMeneButton1'>";
+            if (mysqli_num_rows($result)==0){
+            echo "<li><div style='float:left;'> <p style='padding:10;'>There are no friend requests </p></div></li></ul></div>";
+            } else {
+                            while ($row = mysqli_fetch_assoc($result)){
+                            echo "<li>";
+                            echo "<div style ='float:left;'><p style='padding:10;'>".$row['source']."</p></div>";
+                            echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' style='margin:5;' type = 'submit' name='accept' value=".$row["source"].">Accept</button> </form></div>";
+                            echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' style='margin:5;' type = 'submit' name='reject' value=".$row["source"].">Reject</button> </form></div>";
+                            echo "</li></ul></div>";
                             
-                                echo "<div style = 'float:right;'   class='dropdown'><button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false'> Friend requests <span class='badge bg-secondary'>".requests($conn,$_SESSION['email'])."</span> </button> <ul class='dropdown-menu' aria-labelledby='dropdownMeneButton1'>";
-                                while ($row = mysqli_fetch_assoc($result)){
-                                echo "<li>";
-                                echo "<div style ='float:left;'><p>".$row['source']."</p></div>";
-                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='accept' value=".$row["source"].">Accept</button> </form></div>";
-                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='reject' value=".$row["source"].">Reject</button> </form></div>";
-                                echo "</li></ul></div>";
-                                
-                            }
-                        ?>
-                    </div>
-                    <button onclick="window.location.href='index.php'" class='btn btn-outline-secondary' style ="float:right;">Home</button>
-                    </h3>                     
-                </div>
+                        }
+            }
+                    ?>                        
+                <button onclick="window.location.href='index.php'" class='btn btn-outline-secondary' style ="float:right;">Home</button>
+        </div>
+                
+        </div>
             </div>
+        </div>
 
             <div class="row" style="height:90%;">
                 <div class ='col-2 shadow-lg p-3 mb-5 bg-body rounded' style="height:100% overflow:'scroll'" >
@@ -141,14 +145,22 @@
                 </div>
                 <div class ='col-10 shadow-lg p-3 mb-5 bg-body rounded' style = "height: 100%">
                     <div class='row' style="height:10%">                    
-                    <h3> <?= $_SESSION['friendname']?> </h3>
+                    <h3> <?php
+                         if(isset($_SESSION['friendname'])){
+                        echo $_SESSION['friendname'];
+                        } else {
+                            echo "";
+                        }
+                        ?> </h3>
                     </div>                    
                     <div class='row overflow-scroll' style="height:60%;">
                     <?php 
+                    if(isset($_SESSION['friendemail'])){
+
                     $friend_email= $_SESSION['friendemail'];
                     $sql="select msg, source, target, msg_date from messages where source = '$email' and target= '$friend_email' union select msg, source ,target,msg_date from messages where target='$email' and source = '$friend_email' order by msg_date";
                     $result = mysqli_query($conn,$sql);
-                    if(mysqli_num_rows($result)>0){
+                    if(mysqli_num_rows($result)>0 && isset($_SESSION['friendemail'])){
                         while ($row=mysqli_fetch_assoc($result)){
                             echo "<div class='row'>";
                             if ($row['source']==$email){
@@ -162,6 +174,10 @@
                     else {
                         echo "<h2> No messages yet</h2>";
                     }
+
+                }else{
+                        
+                }
                     ?>                    
                     </div>                    
                     <div class='row' style="height:30%">

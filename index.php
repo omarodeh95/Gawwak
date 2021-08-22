@@ -82,8 +82,8 @@
             ?>
             <div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded'>
                 <div class='row '>
-                    <h3> Gawwak <?php echo $name;?>                
-                    <button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
+                    <div class='col-3'><h3> Gawwak <?php echo $name;?></h3></div>
+                    <div class='col'><button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
                     <!-- friend requests function -->
                         <?php
                             $email = $_SESSION['email'];
@@ -91,20 +91,26 @@
                             $result = mysqli_query($conn,$sql);
                             
                                 echo "<div style = 'float:right;'   class='dropdown'><button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false'> Friend requests <span class='badge bg-secondary'>".requests($conn,$_SESSION['email'])."</span> </button> <ul class='dropdown-menu' aria-labelledby='dropdownMeneButton1'>";
+				if (mysqli_num_rows($result)==0){
+				echo "<li><div style='float:left;'> <p style='padding:10;'>There are no friend requests </p></div></li></ul></div>";
+				} else {
                                 while ($row = mysqli_fetch_assoc($result)){
                                 echo "<li>";
-                                echo "<div style ='float:left;'><p>".$row['source']."</p></div>";
-                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='accept' value=".$row["source"].">Accept</button> </form></div>";
-                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='reject' value=".$row["source"].">Reject</button> </form></div>";
+                                echo "<div style ='float:left;'><p style='padding:10;'>".$row['source']."</p></div>";
+                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' style='margin:5;' type = 'submit' name='accept' value=".$row["source"].">Accept</button> </form></div>";
+                                echo "<div style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' style='margin:5;' type = 'submit' name='reject' value=".$row["source"].">Reject</button> </form></div>";
                                 echo "</li></ul></div>";
                                 
                             }
+			    }
                         ?>                        
-                    </div>
                     <button onclick="window.location.href='msg.php'" class='btn btn-outline-secondary' style ="float:right;">Messages</button>
-                    </h3>                     
+            </div>
+                    
+		    </div>
                 </div>
             </div>
+            
             <?php
                 $email = $_SESSION['email'];
                 $sql = "select email,firstname, lastname,reg_date,status from users where NOT '$email' = email";
