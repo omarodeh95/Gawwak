@@ -1,5 +1,5 @@
 # Project
-Just some project
+Simple Chat project
 learned topics:
 -linux
 	-get familier with OS
