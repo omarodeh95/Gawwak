@@ -82,7 +82,7 @@
             ?>
             <div class='container-fluid shadow-lg p-3 mb-5 bg-body rounded'>
                 <div class='row '>
-                    <h3> Welcome to The Project <?php echo $name;?>                
+                    <h3> Gawwak <?php echo $name;?>                
                     <button onclick="window.location.href='logout.php'" class='btn btn-outline-secondary' style ="float:right;">Logout</button>
                     <!-- friend requests function -->
                         <?php
