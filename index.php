@@ -129,7 +129,7 @@
                 if(mysqli_num_rows($result)>0){
                     echo "<div class = 'row shadow-lg p-3 mb-5 bg-body rounded'>";
                     while ($row=mysqli_fetch_assoc($result)){
-                        echo "<div  class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><p >".ucfirst($row['firstname'])." ".ucfirst($row['lastname'])."</p></div>";
+                        echo "<div  class ='col-4 shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><p >".ucfirst($row['firstname'])." ".ucfirst($row['lastname'])."</p></div>";
                         echo "<div class ='col shadow-lg p-3 mb-5 bg-body rounded' style ='float:left;'><form method='POST' action ='index.php'> <button class='btn btn-outline-secondary' type = 'submit' name='delete' value=".$row['email'].">Delete</button> </form></td>";
                         echo "<form method='POST' action ='index.php'> <button  class='btn btn-outline-secondary' type = 'submit' name='friendemail' value=".$row['email'].">Message</button> <input type='text' name='friendname' style='display:none;' value=".$row['firstname']."></input></form></td></tr></div>";
                         echo "<script type = \"text/javascript\"> isfriend(\"".$row['email']."\");</script>";
